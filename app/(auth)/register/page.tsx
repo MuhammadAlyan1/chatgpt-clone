@@ -126,7 +126,7 @@ export default function RegisterPage() {
                 }
                 title="Password"
               />
-              <label className="flex items-start gap-2 text-sm text-white cursor-pointer">
+              <label className="flex items-start gap-2 text-sm text-white cursor-pointer mb-3">
                 <Checkbox
                   checked={hasAcceptedTerms}
                   onCheckedChange={(checked) =>
@@ -136,11 +136,17 @@ export default function RegisterPage() {
                 />
                 <span>
                   I accept the{' '}
-                  <Link href="/terms" className="font-medium text-amber-400">
+                  <Link
+                    href="/terms-and-condition"
+                    className="font-medium text-amber-400"
+                  >
                     terms and conditions
                   </Link>{' '}
                   and{' '}
-                  <Link href="/privacy" className="font-medium text-amber-400">
+                  <Link
+                    href="/privacy-policy"
+                    className="font-medium text-amber-400"
+                  >
                     privacy policy
                   </Link>
                 </span>
