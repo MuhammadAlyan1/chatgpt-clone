@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { Checkbox } from '@/components/ui/checkbox';
 import { TextField } from '@/components/shared/TextField';
 import { ThirdPartyAuthenticator } from '../third-party-authenticator';
 import { createClient } from '@/lib/supabase/client';
@@ -12,6 +14,7 @@ import { cn, isEmailValid, isPasswordValid } from '@/lib/utils';
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -25,6 +28,10 @@ export default function RegisterPage() {
       setError(
         'Password must contain at least 8 characters, an uppercase letter, a special character, and a number'
       );
+      return;
+    }
+    if (!hasAcceptedTerms) {
+      setError('You must accept the terms and conditions and privacy policy');
       return;
     }
 
@@ -47,6 +54,8 @@ export default function RegisterPage() {
       }
 
       setHasSubmitted(true);
+      setEmail('');
+      setPassword('');
     } catch (error: any) {
       setError(error?.message || 'Failed to register');
     } finally {
@@ -55,83 +64,123 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm space-y-6">
-        {hasSubmitted && (
-          <div className="space-y-2 rounded-md border border-zinc-200 p-4 text-center dark:border-zinc-800">
-            <h2 className="text-base font-semibold">Check your email</h2>
-            <p className="text-sm text-zinc-500">
-              We sent you a confirmation link. Click it to activate your
-              account, then return to sign in.
+    <div className="flex">
+      <div className="flex w-full min-h-screen items-center justify-center px-4">
+        <div className="w-full max-w-sm">
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <Image
+              src={'/turing-technologies-logo.png'}
+              width={70}
+              height={60}
+              alt="Turing Technologies Logo"
+            />
+            <h1 className="text-white text-3xl font-bold">TuringTech Test</h1>
+          </div>
+          {hasSubmitted && (
+            <div className="space-y-2 rounded-md border mb-4 border-neutral-600 p-4 text-center">
+              <h2 className="text-base font-semibold">Check your email</h2>
+              <p className="text-sm text-zinc-400">
+                We sent you a confirmation link. Click it to activate your
+                account, then return to sign in.
+              </p>
+            </div>
+          )}
+          <div className="space-y-6 p-6 rounded-lg border border-neutral-600">
+            <div className="space-y-1">
+              <h1 className="text-lg font-semibold text-center mt-2">
+                Create your TuringTech Test account
+              </h1>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e?.preventDefault();
+                register(email, password);
+              }}
+              className="space-y-4"
+            >
+              {/* It should have a label, but due to the Figma design I'm removing */}
+              <TextField
+                id="email"
+                type="email"
+                value={email}
+                placeholder="Email"
+                onChange={(val) => setEmail(val)}
+                errorText={
+                  email && !isEmailValid(email)
+                    ? 'Enter a valid email address'
+                    : ''
+                }
+                title="Email"
+              />
+              <TextField
+                id="Password"
+                type="password"
+                placeholder="password"
+                value={password}
+                onChange={(val) => setPassword(val)}
+                errorText={
+                  password && !isPasswordValid(password)
+                    ? 'Password must contain at least 8 characters, an uppercase letter, a special character, and a number'
+                    : ''
+                }
+                title="Password"
+              />
+              <label className="flex items-start gap-2 text-sm text-white cursor-pointer">
+                <Checkbox
+                  checked={hasAcceptedTerms}
+                  onCheckedChange={(checked) =>
+                    setHasAcceptedTerms(checked === true)
+                  }
+                  className="mt-0.5"
+                />
+                <span>
+                  I accept the{' '}
+                  <Link href="/terms" className="font-medium text-amber-400">
+                    terms and conditions
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="/privacy" className="font-medium text-amber-400">
+                    privacy policy
+                  </Link>
+                </span>
+              </label>
+              {error && (
+                <p className="text-sm text-center text-red-600">{error}</p>
+              )}
+              <Button
+                type="submit"
+                disabled={isLoading || !hasAcceptedTerms}
+                className={'gap-2 w-full h-10 mt-2'}
+              >
+                <Spinner
+                  data-icon="inline-start"
+                  className={cn(isLoading ? 'block' : 'hidden')}
+                />
+                {isLoading ? 'Creating Account..' : 'Create Account'}
+              </Button>
+            </form>
+            <div className="flex items-center gap-6 text-sm text-zinc-200">
+              <span className="h-px flex-1 bg-zinc-600" />
+              <span>Or</span>
+              <span className="h-px flex-1 bg-zinc-600" />
+            </div>
+            <ThirdPartyAuthenticator />
+            <p className="text-center text-sm text-white">
+              Already have an account?
+              <Link
+                href="/login"
+                className="font-medium text-amber-400 inline-block px-1"
+              >
+                Sign in
+              </Link>
             </p>
           </div>
-        )}
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold">Create your account</h1>
-          <p className="text-sm text-zinc-500">
-            We'll send a confirmation link to your email.
-          </p>
         </div>
-        <form
-          onSubmit={(e) => {
-            e?.preventDefault();
-            register(email, password);
-          }}
-          className="space-y-4"
-        >
-          {/* It should have a label, but due to the Figma design I'm removing */}
-          <TextField
-            id="email"
-            type="email"
-            value={email}
-            placeholder="Email"
-            onChange={(val) => setEmail(val)}
-            errorText={
-              email && !isEmailValid(email) ? 'Enter a valid email address' : ''
-            }
-            title="Email"
-          />
-          <TextField
-            id="Password"
-            type="password"
-            placeholder="password"
-            value={password}
-            onChange={(val) => setPassword(val)}
-            errorText={
-              password && !isPasswordValid(password)
-                ? 'Password must contain at least 8 characters, an uppercase letter, a special character, and a number'
-                : ''
-            }
-            title="Password"
-          />
-          {error && <p className="text-sm text-center text-red-600">{error}</p>}
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className={'gap-2 w-full h-10 mt-4'}
-          >
-            <Spinner
-              data-icon="inline-start"
-              className={cn(isLoading ? 'block' : 'hidden')}
-            />
-            {isLoading ? 'Creating Account..' : 'Create Account'}
-          </Button>
-        </form>
-        <div className="flex items-center gap-3 text-xs text-zinc-500">
-          <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
-          <span>or</span>
-          <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
-        </div>
-        <ThirdPartyAuthenticator />
-        <p className="text-center text-sm text-zinc-500">
-          Already have an account?{' '}
-          <Link
-            href="/login"
-            className="font-medium text-zinc-900 underline dark:text-zinc-100"
-          >
-            Sign in
-          </Link>
-        </p>
+      </div>
+
+      <div className="w-full min-h-screen bg-zinc-900 items-center justify-center hidden lg:flex">
+        <div className="w-[30vw] aspect-square bg-zinc-800"></div>
       </div>
     </div>
   );
