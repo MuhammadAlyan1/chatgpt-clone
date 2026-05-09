@@ -1,8 +1,10 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Turing Technologies Test - ChatGPT Clone
 
-## Getting Started
+## Running Locally
 
-First, run the development server:
+Please go through `.env.example` for ENVs.
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -16,21 +18,19 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Live Demo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+[Click here](https://alyan-chatgpt-clone.vercel.app/) view the live deployed app.
 
-## Learn More
+## Implemntation Details
 
-To learn more about Next.js, take a look at the following resources:
+Everything is built on Next.js, Typescript, TailwindCSS, and ShadCN. Supabase is used for authentication and as the database.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## What's missing?
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Streaming responses
+- Switching Themes
+- Seperate repository for backend
+- Further UI/UX polish
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+I would've preferred to complete these as well if given enough time.

@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { ChevronDown, LogOut } from 'lucide-react';
 
 import { logout } from '@/app/(auth)/actions';
 import { cn } from '@/lib/utils';
+import { useConversations } from '@/context/conversations';
 import {
   Sidebar,
   SidebarContent,
@@ -27,22 +28,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-type ChatHistoryItem = {
-  id: string;
-  title: string;
-};
-
 type AppSidebarProps = {
   user: {
     name: string;
     email: string;
     image?: string;
   };
-  history?: ChatHistoryItem[];
 };
 
-export function AppSidebar({ user, history = [] }: AppSidebarProps) {
+export function AppSidebar({ user }: AppSidebarProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { conversations } = useConversations();
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
 
   return (
@@ -120,21 +117,25 @@ export function AppSidebar({ user, history = [] }: AppSidebarProps) {
           <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             <SidebarGroupContent>
               <SidebarMenu>
-                {history.length === 0 ? (
+                {conversations.length === 0 ? (
                   <p className="px-2 py-1 text-xs text-muted-foreground">
                     No chats yet
                   </p>
                 ) : (
-                  history.map((item) => (
-                    <SidebarMenuItem key={item.id}>
-                      <SidebarMenuButton
-                        size="sm"
-                        onClick={() => router.push(`/chat/${item.id}`)}
-                      >
-                        <span>{item.title}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))
+                  conversations.map((item) => {
+                    const isActive = pathname === `/chat/${item.id}`;
+                    return (
+                      <SidebarMenuItem key={item.id}>
+                        <SidebarMenuButton
+                          size="sm"
+                          isActive={isActive}
+                          onClick={() => router.push(`/chat/${item.id}`)}
+                        >
+                          <span className="truncate">{item.title}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })
                 )}
               </SidebarMenu>
             </SidebarGroupContent>

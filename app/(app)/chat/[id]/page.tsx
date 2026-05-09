@@ -1,4 +1,5 @@
-import { verifySession } from "@/lib/auth/dal";
+import { verifySession } from '@/lib/auth/dal';
+import { ChatView } from '@/components/chat/view';
 
 export default async function ChatPage({
   params,
@@ -8,10 +9,5 @@ export default async function ChatPage({
   await verifySession();
   const { id } = await params;
 
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-2 px-4">
-      <h1 className="text-2xl font-semibold">Chat</h1>
-      <p className="text-sm text-zinc-500">id: {id}</p>
-    </div>
-  );
+  return <ChatView key={id} id={id} />;
 }
